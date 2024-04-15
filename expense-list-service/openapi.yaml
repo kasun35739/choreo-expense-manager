@@ -1,0 +1,160 @@
+openapi: 3.0.3
+info:
+  title: Choreo Sample - expense List - Nodejs REST API Service
+  description: >-
+    This is a sample API specification for a simple expense list application with in-memory cache
+    written in Nodejs
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Choreo
+  url: https://choreo.dev
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: expenses
+    description: In-memory expense list cache API
+paths:
+  /expenses:
+    summary: List all expenses
+    get:
+      summary: List all expenses
+      operationId: ListAllexpenses
+      tags:
+        - expenses
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StringArray"
+    post:
+      summary: Insert a new expense
+      operationId: SetNewexpense
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid request body
+      tags:
+        - expenses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KeyValue"
+
+  /expenses/{uuid}:
+    summary: Get expense by UUID
+    get:
+      tags:
+        - expenses
+      summary: Get expense by UUID
+      operationId: GetexpenseByUUID
+      parameters:
+        - name: uuid
+          in: path
+          description: UUID of expense to return
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyValue"
+        "404":
+          description: UUID not found
+    delete:
+      tags:
+        - expenses
+      summary: Delete expense by UUID
+      description: Deletes a single expense based on the UUID supplied
+      operationId: DeleteexpenseByUUID
+      parameters:
+        - name: uuid
+          in: path
+          description: UUID of expense to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+        "404":
+          description: ISBN not found
+    put:
+      tags:
+        - expenses
+      summary: Update expense status by UUID
+      description: Updates the status of the expense based on the UUID supplied
+      operationId: UpdateexpenseStatusByUUID
+      parameters:
+        - name: uuid
+          in: path
+          description: UUID of expense to update
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+        "404":
+          description: UUID not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Status"
+  /healthz:
+    summary: Healthcheck endpoint
+    get:
+      summary: Healthcheck
+      operationId: Healthcheck
+      responses:
+        "200":
+          description: Healthy response
+
+components:
+  schemas:
+    Key:
+      type: object
+      properties:
+        uuid:
+          type: string
+          example: "my-uuid"
+    Status:
+      type: object
+      properties:
+        category:
+          type: string
+          example: "Recurring"
+    KeyValue:
+      type: object
+      required:
+        - title
+        - date
+        - category
+        - amount
+      properties:
+        title:
+          type: string
+          example: "my-title"
+        date:
+          type: string
+          example: "my-date"
+        category:
+          type: string
+          example: "Recurring"
+        amount:
+          type: string
+          example: "100"
+    StringArray:
+      type: array
+      items:
+        type: string
